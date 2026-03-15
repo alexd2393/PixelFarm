@@ -22,16 +22,17 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      - name: Download Gradle Wrapper JAR
+      - name: Install Gradle and generate wrapper
         run: |
-          curl -sL "https://github.com/gradle/gradle/raw/v7.5.0/gradle/wrapper/gradle-wrapper.jar" \
-            -o PixelFarm/gradle/wrapper/gradle-wrapper.jar
-
-      - name: Grant execute permission
-        run: chmod +x PixelFarm/gradlew
+          wget -q https://services.gradle.org/distributions/gradle-7.5-bin.zip
+          unzip -q gradle-7.5-bin.zip
+          ./gradle-7.5/bin/gradle wrapper --gradle-version 7.5 -p PixelFarm
 
       - name: Build Debug APK
-        run: cd PixelFarm && ./gradlew assembleDebug --stacktrace
+        run: |
+          cd PixelFarm
+          chmod +x gradlew
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
